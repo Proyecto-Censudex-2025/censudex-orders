@@ -140,7 +140,8 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       this.channel.sendToQueue(
         queue,
         Buffer.from(JSON.stringify(payload)),
-        { persistent: true }
+        { contentType: 'application/json',
+          persistent: true }
       );
       this.logger.log(`Mensaje enviado a cola ${queue}`);
     } catch (error) {
@@ -193,8 +194,10 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
    */
   async consumeMessages(queue: string, callback: (msg: any) => void): Promise<void> {
     try {
+
+      await this.channel.assertExchange(queue, 'fanout', { durable: true });
       await this.ensureQueue(queue);
-      
+      await this.channel.bindQueue(queue, queue, '');
       this.channel.consume(queue, (msg) => {
         if (msg) {
           const content = JSON.parse(msg.content.toString());
