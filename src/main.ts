@@ -19,7 +19,7 @@ async function bootstrap() {
       options: {
         package: 'orders',
         protoPath: join(__dirname, 'src/orders/proto/order.proto'),
-        url: `0.0.0.0:${process.env.GRPC_PORT || 50051}`,
+        url: `0.0.0.0:${process.env.GRPC_PORT || 50052}`,
       },
     },
   );
